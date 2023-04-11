@@ -4,17 +4,18 @@ from sys import exit
 
 class Player:
     
-    y_plyer = 50
+    gravity = 0
     b = pygame.image.load('Images/Bird3.png')
     bird = pygame.transform.scale(b, (40, 40))
-    bird_rect = bird.get_rect(topleft = (50, y_plyer))
+    bird_rect = bird.get_rect(topleft = (50, 50))
+    
+    score = 0
+    
+            
 
     
 
     
-
-
-
 class Game:
     
     pipeG_y_pos = random.randint(18, 65)*10
@@ -61,10 +62,7 @@ class Game:
     #pipeD_y_pos = 0
 
 
-
-
     #Zde budou rectangle
-
     ground_rec = ground.get_rect(topleft = (ground_x_pos, 700))
     pipeG_rec = pipeG.get_rect(topleft = (pipeG_x_pos, pipeG_y_pos))
     pipeD_rec = pipeD.get_rect(topleft = (pipeD_x_pos, pipeD_y_pos))
@@ -85,11 +83,7 @@ class Game:
         Game.pygame.display.set_icon(icone)
 
 
-        score = 0
 
-
-    
-        
         #Tady je True loop, který se stará o běh hlvaního okna
         while True:
             for event in pygame.event.get():
@@ -99,19 +93,25 @@ class Game:
                     
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        print('key')
+                        Player.gravity = 0
+                        Player.gravity -= 10
 
+
+            
+        
             if (Game.pipeG_rec.x < -50):
                 Game.pipeG_rec.x = 500
                 Game.pipeD_rec.x = 500
                 Game.pipeG_rec.y = random.randint(18, 65)*10
                 Game.pipeD_rec.y = Game.pipeG_rec.y - 920
+                Player.score += 1
                 
             if (Game.pipeG2_rec.x < -50):
                 Game.pipeG2_rec.x = 500
                 Game.pipeD2_rec.x = 500
                 Game.pipeG2_rec.y = random.randint(18, 65)*10
                 Game.pipeD2_rec.y = Game.pipeG2_rec.y - 920
+                Player.score += 1
 
 
             if (Game.ground_rec.x < -500):
@@ -119,7 +119,7 @@ class Game:
             
             
                 
-                
+            #Pohyb trubek
             Game.pipeG_rec.x -= 5
             Game.pipeD_rec.x -= 5
             
@@ -127,11 +127,32 @@ class Game:
             Game.pipeD2_rec.x -= 5
             
             Game.ground_rec.x -= 5
+            
+            Player.gravity += 0.7
+            Player.bird_rect.y = Player.bird_rect.y + Player.gravity
+
+
 
 
             mouse_pos = pygame.mouse.get_pos()
             if Player.bird_rect.collidepoint(mouse_pos):
-                print('coll')
+                print('col')
+                
+            collide = pygame.Rect.colliderect(Player.bird_rect, Game.pipeD_rec)
+            collide2 = pygame.Rect.colliderect(Player.bird_rect, Game.pipeG_rec)
+            collide3 = pygame.Rect.colliderect(Player.bird_rect, Game.pipeD2_rec)
+            collide4 = pygame.Rect.colliderect(Player.bird_rect, Game.pipeG2_rec)
+            collide5 = pygame.Rect.colliderect(Player.bird_rect, Game.ground_rec)
+            
+            if collide or collide2 or collide3 or collide4 or collide5:
+                print('col')
+                pygame.quit()
+                exit()
+                
+            print(Player.score)
+                
+
+            
 
         
                     
@@ -155,10 +176,7 @@ class Game:
 
 
 
-
-
-    
-        
+  
 
 
 if __name__ == "__main__":
